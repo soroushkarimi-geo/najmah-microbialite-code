@@ -1,9 +1,14 @@
 # Najmah microbialite fabric classification
 
-Code for Paper 1: classification of laminated (stromatolite, MF-B, Class 1) and
-clotted (thrombolite, MF-E, Class 2) microbialite fabric in thin-section images of
-the Najmah Formation (Middle-Upper Jurassic, Dudan/Dawan and Kezi sections, NW Iran),
-and a test of the resulting lamination index for stratigraphic order.
+Code for the paper:
+
+> **Machine-learning classification of laminated and clotted microbialite fabrics in
+> small thin-section datasets, with stratigraphic order testing: Najmah Formation, NW Iran**
+
+The code classifies laminated (stromatolite, MF-B, Class 1) and clotted (thrombolite,
+MF-E, Class 2) microbialite fabric in thin-section images of the Najmah Formation
+(Middle-Upper Jurassic, Dudan/Dawan and Kezi sections, NW Iran), and tests the
+resulting lamination index for stratigraphic order.
 
 - 49 specimens, 1,651 PPL/XPL images (Classes 1 and 2)
 - 404 features per image: 12 GLCM, 384 DINOv2-small, 8 lamination descriptors
@@ -123,6 +128,105 @@ the Dudan measured section, passed with `--log-pdf /path/to/doudan_log.pdf`. The
 coordinates in the script are for that specific drawing, so another PDF will not
 line up.
 
+### Using your own images
+
+The scripts were written for the Najmah archive, but the feature extraction and the
+classifiers work on any set of thin-section images arranged as described here. You
+only prepare the raw input: the images and one label per specimen. The feature
+tables and models are then produced by the scripts.
+
+**1. Arrange the images**
+
+```
+<repository root>/
+  Najmeh Formation/            top folder; this name is fixed in the code
+    Dudan Section/             one folder per section (names: see below)
+      AB_1/                    one folder per specimen; the folder name is the sample code
+        PPL/                   plane-polarized light images
+        XPL/                   cross-polarized light images
+      AB_2/
+      ...
+```
+
+These names are fixed in the three `extract_*.py` scripts. Use them as they are, or
+edit them in all three scripts in the same way:
+
+| Setting (in each `extract_*.py`) | Default | Meaning |
+|---|---|---|
+| `base_dir / "Najmeh Formation"` | `Najmeh Formation` | name of the top folder |
+| `SECTION_FOLDERS` | `{"Dudan Section": "Dudan", "Kezi Section": "Kezi"}` | section folder name -> value written to the `section` column; list all your sections |
+| `IMAGE_TYPE_FOLDERS` | `("PPL", "XPL")` | image subfolders that are read; any other subfolder is ignored |
+| `IMAGE_EXTENSIONS` | `.jpg .jpeg .png .tif .tiff` | file types that are read |
+
+- Sample code = specimen folder name with spaces removed. Use letters, an
+  underscore and a number (`AB_12`, optionally with a letter suffix, `AB_12B`).
+  Classification only needs the codes to be unique; the stratigraphy scripts also
+  read the prefix and the number (step 5).
+- A specimen may have only `PPL` or only `XPL` images.
+
+**2. Image requirements**
+
+| Requirement | Reason |
+|---|---|
+| 8 bits per channel, greyscale or RGB | GLCM and lamination features use 8-bit grey levels; 16-bit images are clipped at 255 when converted |
+| The same magnification and similar pixel size for all images | the Gabor frequency (0.15 cycles/px) and the GLCM distances (1 and 3 px) are fixed in pixels |
+| A roughly square field of view | the lamination features resize every image to 256 x 256 px without keeping the aspect ratio |
+| Several images per specimen, and specimens that are separate samples | cross-validation holds out whole specimens, never single images |
+| At least two specimens per class (in practice many more) | a specimen whose class has no other specimen cannot be tested and is skipped |
+
+Any image size works: GLCM uses the full image, the lamination features resize to
+256 x 256 px, and DINOv2 resizes and centre-crops to 224 px. Colour images are
+converted to grey for GLCM and the lamination features and kept in colour for DINOv2.
+
+**3. Labels**
+
+Replace the dictionary `SEED_LABELS` in `auto_label.py` with your own specimens. The
+key is the sample code with `-` instead of `_`, in upper case (folder `AB_12` ->
+`"AB-12"`); the value is the class name:
+
+```python
+SEED_LABELS = {
+    "AB-1": "MF-B", "AB-2": "MF-B",
+    "AB-3": "MF-E", "AB-4": "MF-E",
+}
+```
+
+Specimens that are not listed are labeled `unlabeled` (do not use that word as a class
+name). They are left out of training and are used only by the scripts that read all
+images (PCA plots, interpretability, triage).
+
+**4. Run**
+
+Build the feature tables with the commands in
+[Rebuild the feature table](#rebuild-the-feature-table-needs-the-images), then run the
+analyses on `data/image_metadata_auto_label.csv` (all classes) or
+`data/image_metadata_reliable_classes.csv` (two classes):
+
+- Any class names, any number of classes: `train_xgboost_cv.py`, `compare_models.py`,
+  `fusion_vs_dinov2_significance_test.py`, `interpretability_analysis.py`,
+  `plot_pca_explained_variance.py`, and `feature_family_ablation.py` (its MF-B / MF-E
+  F1 columns stay empty for other class names).
+- Two classes with the codes `MF-B` (Class 1) and `MF-E` (Class 2): every other paper
+  script, including `select_reliable_classes.py`, which builds the two-class table.
+  Either use these two codes for your classes in `SEED_LABELS`, or replace them in the
+  scripts.
+
+**5. Stratigraphy scripts**
+
+The order tests and section figures are specific to the Najmah sections: they use the
+section names `Dudan` / `Kezi` and the sample-code prefixes `SD` / `SK`, the sample
+number as stratigraphic position (numbers must increase upward), and Dudan-specific
+constants. To use them on another section, replace these constants:
+
+| Script | Najmah-specific settings |
+|---|---|
+| `shallowing_index_cyclicity_analysis.py` | `COARSE_RANK` (ordinal rank of MF-D, MF-B, MF-E), sections in `run` (`SD`, `SK`) |
+| `shallowing_index_changepoint_test.py` | `SEGMENT_BOUNDS` (T-R sequences as sample-number ranges), section `SD` |
+| `sequence_stratigraphic_profile.py` | `CALIB` (thickness vs sample number), `SB_POSITIONS`, `TR_INTERVALS`, section `Dudan` / `SD` |
+| `stratigraphic_power_analysis.py` | `CALIB`, `LOG_TICKS_PT`, section `Dudan` |
+| `plot_section_lamination_index.py` | `SECTIONS` (`SD`, `SK`, boundaries, figure names) |
+| `plot_doudan_column_figure.py` | the Dudan log drawing and all its coordinates; not reusable for another section |
+
 ### Outputs and run order
 
 The paper commands below write everything to `out/`. A few scripts read the output
@@ -206,7 +310,7 @@ about 10 min for `specimen_level_rerun.py`, a few seconds for the stratigraphy s
 
 ## Repository layout
 
-- Top level: the scripts that produce Paper 1's tables and figures (table above).
+- Top level: the scripts that produce the paper's tables and figures (table above).
 - `exploratory/`: earlier and supporting analyses from the same project, kept for transparency. Run from the repository root with `PYTHONPATH=. python exploratory/<script>.py`.
 - `binocular/`: feasibility check of binocular images for the lamination features.
 

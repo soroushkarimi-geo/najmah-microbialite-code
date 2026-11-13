@@ -2,7 +2,7 @@
 lamination index, and power simulation for TR-scale cycles (Dudan section).
 
 Produces the "Runs test" and "Lomb-Scargle" rows of Table 5 and all of
-Table 4 (simulated detection power) in Paper 1.
+Table 4 (simulated detection power) in the paper.
 
 Heights (m) from the 39-point thickness-sample calibration table of the Dudan
 (= Dawan) section up to SD-134, and from the measured log's own sample ticks above it. S = specimen mean of

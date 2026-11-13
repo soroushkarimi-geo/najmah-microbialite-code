@@ -1,4 +1,4 @@
-"""Light-mode breakdown and site-confound check for Paper 1 (Class 1 vs Class 2).
+"""Light-mode breakdown and site-confound check (Class 1 vs Class 2).
 
 Same protocol as train_xgboost_cv.py: XGBoost with config.py hyperparameters, class-balanced
 sample weights recomputed per fold, leave-one-specimen-out. Probabilities are kept (objective
