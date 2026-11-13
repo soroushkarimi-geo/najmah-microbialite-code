@@ -53,3 +53,6 @@ pyvenv.cfg
 # Local-only code, not part of the published repository
 /legacy/
 /sequence_stratigraphy_v2/
+
+# Thin-section image archive, placed or linked at the repository root
+/Najmeh Formation

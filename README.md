@@ -27,39 +27,153 @@ from the images (`extract_embeddings.py`).
 
 ## Data
 
-The data are not in this repository; they are available from the authors on reasonable request.
-Place the two feature tables here before running the scripts (this folder is ignored by git):
+The data are not in this repository. They are available from the authors on
+reasonable request. What you need depends on what you want to run:
+
+| You want to | You need |
+|---|---|
+| Reproduce the paper's tables and figures (except the log drawing in Fig. 7) | 1. the two feature tables |
+| Draw Fig. 7 | 1. and 3. the Dudan measured-log PDF |
+| Rebuild the features from the images, run the video scripts or `binocular/` | 1. and 2. the thin-section image archive |
+
+All paths below are relative to the repository root, and every command is run from
+there. `data/`, `out/`, `results/`, `models/` and `Najmeh Formation/` are ignored by
+git, so nothing you place in them can be committed by accident.
+
+### 1. Feature tables
+
+Put the two CSV files in `data/`:
 
 ```
-data/
-  image_metadata_auto_label.csv          all labeled + unlabeled images (1,973 rows)
-  image_metadata_reliable_classes.csv    MF-B and MF-E only (1,651 rows, 49 specimens)
+najmah-microbialite-code/
+  data/
+    image_metadata_auto_label.csv          every image, labeled or not: 1,973 rows, 61 specimens
+    image_metadata_reliable_classes.csv    MF-B and MF-E only: 1,651 rows, 49 specimens
 ```
 
-One row per image: `image_id`, `sample_code`, `section`, `image_type`, `source_path`
-(relative to the image root), `label`, then the features `glcm_*`, `dino_000`...`dino_383`, `lam_*`.
+Both tables have one row per image and the same 410 columns:
 
-To rebuild the feature table,
-put them like this:
+| Column(s) | Content |
+|---|---|
+| `image_id` | `<sample_code>_<PPL or XPL>_<NN>`, e.g. `SD_102_PPL_01` |
+| `sample_code` | specimen, e.g. `SD_102`, `SD_102B`, `SK_84` (SD = Dudan, SK = Kezi) |
+| `section` | `Dudan` or `Kezi` |
+| `image_type` | `PPL` or `XPL` |
+| `source_path` | image file relative to the folder that holds `Najmeh Formation/`, e.g. `Najmeh Formation/Dudan Section/SD_100/PPL/<file>.jpg` |
+| `label` | `MF-B`, `MF-C`, `MF-D`, `MF-E`, `MF-F`, `MF-G` or `unlabeled` |
+| `glcm_*` (12) | GLCM texture, e.g. `glcm_contrast_d1` |
+| `dino_000` ... `dino_383` (384) | DINOv2-small embedding |
+| `lam_*` (8) | lamination descriptors, e.g. `lam_gabor_anisotropy` |
+
+Check that the tables are in place (expected output: `(1973, 410) (1651, 410) 49`):
+
+```bash
+python -c "import pandas as pd; a = pd.read_csv('data/image_metadata_auto_label.csv'); b = pd.read_csv('data/image_metadata_reliable_classes.csv'); print(a.shape, b.shape, b.sample_code.nunique())"
+```
+
+This is all that the commands in [Paper tables and figures](#paper-tables-and-figures) need.
+
+### 2. Thin-section image archive (optional)
+
+Place the archive at the repository root, or link it there:
+
+```bash
+ln -s "/path/to/archive/Najmeh Formation" "Najmeh Formation"
+```
+
+The folder layout and names must be exactly as follows:
 
 ```
-<image_root>/Najmeh Formation/Dudan Section/SD_87/PPL/*.jpg
-<image_root>/Najmeh Formation/Dudan Section/SD_87/XPL/*.jpg
-<image_root>/Najmeh Formation/Kezi Section/SK_83/PPL/*.jpg
-...
+Najmeh Formation/
+  Dudan Section/
+    SD_87/
+      PPL/*.jpg
+      XPL/*.jpg
+      Bino/*.jpg           binocular images (only for binocular/; also spelled Binocullar)
+    SD_102 B/              spaces are removed, so this specimen is SD_102B
+    ...
+  Kezi Section/
+    SK_83/
+      PPL/*.jpg
+      XPL/*.jpg
+    ...
 ```
+
+- The specimen folder name is the sample code. Use an underscore (`SD_87`); the
+  labels in `auto_label.py` are matched after replacing `_` by `-`.
+- Spaces in folder names are removed, so `SD_102 B` and `SD_102B` give the same
+  specimen and the same features. The distributed tables were built with the folder
+  named `SD_102 B`, and their 24 `source_path` values for SD_102B use that spelling.
+- Image files can be `.jpg`, `.jpeg`, `.png`, `.tif` or `.tiff`. Their names can be
+  anything (the archive uses Persian-digit dates).
+- `image_id` numbers the files of each `PPL`/`XPL` folder in sorted order (`_01`,
+  `_02`, ...). Adding, removing or renaming images changes the numbering, and the
+  rebuilt table will then no longer match the distributed one row for row.
+
+With the archive at the repository root, `source_path` in the tables points at the
+right files, and `--base-dir .` works for the extraction scripts below. The first
+run of `extract_embeddings.py` downloads the DINOv2-small weights
+(`facebook/dinov2-small`) from Hugging Face, so it needs internet access once; the
+model runs on the CPU.
+
+### 3. Dudan measured log (Fig. 7 only)
+
+`plot_doudan_column_figure.py` crops the log and its legend from the vector PDF of
+the Dudan measured section, passed with `--log-pdf /path/to/doudan_log.pdf`. The crop
+coordinates in the script are for that specific drawing, so another PDF will not
+line up.
+
+### Outputs and run order
+
+The paper commands below write everything to `out/`. A few scripts read the output
+of another one, so run these first:
+
+1. `train_xgboost_cv.py` writes `out/models/` and `out/tables/cv_per_sample_predictions.csv`,
+   which `score_against_reliable_model.py`, `light_mode_and_site_check.py` and
+   `plot_doudan_column_figure.py` read.
+2. `compare_models.py` writes the tables for `plot_model_confusion_matrices.py` (Fig. 5).
+3. `score_against_reliable_model.py` writes `out/tables/small_class_triage.csv` for Fig. 7.
+
+### Scripts with fixed input paths
+
+The paper scripts take their paths as options. Some scripts in `exploratory/` and
+`binocular/` read fixed paths under `results/` and `models/` instead:
+
+| Script | Reads |
+|---|---|
+| `exploratory/sequence_stratigraphy_synthesis.py` | `results/features/image_metadata_auto_label.csv` |
+| `exploratory/build_3d_stratigraphic_model.py` | `results/tables/sequence_stratigraphy/stratigraphic_log.csv` (from the script above) |
+| `exploratory/blind_validation_check.py` (defaults) | `results/features/image_metadata_auto_label.csv`, `models/reliable_classes/` (both can be set with `--input-csv`, `--models-dir`) |
+| `exploratory/visualize_decision_video.py`, `visualize_feature_math_video.py` | `results/features/image_metadata_reliable_classes.csv`, `models/xgb_microfacies.json`, `models/label_encoder.pkl`, and the images |
+| `binocular/feasibility_check_lamination.py` | `results/features/image_metadata_auto_label.csv` and `Najmeh Formation/` (with the `Bino` folders) |
+
+To run them, copy the tables and the trained model to those places once:
+
+```bash
+mkdir -p results/features models
+cp data/image_metadata_auto_label.csv data/image_metadata_reliable_classes.csv results/features/
+cp out/models/xgb_microfacies.json out/models/label_encoder.pkl models/    # after train_xgboost_cv.py
+```
+
+### Settings
+
+- `config.py`: XGBoost hyperparameters (`XGBOOST_PARAMS`, shared by every model in the
+  project), the microfacies list and the facies belts.
+- `auto_label.py`: the microfacies label of every specimen (`SEED_LABELS`).
+- Random seeds are fixed in the scripts (42; 0 for `stratigraphic_power_analysis.py`).
+  Changing any of these settings changes the results relative to the paper.
 
 ## Rebuild the feature table (needs the images)
 
+With the image archive at the repository root (section 2 above):
+
 ```bash
-python extract_embeddings.py --base-dir /path/to/image_root --output-dir results/features
-python extract_texture_features.py --base-dir /path/to/image_root --features-dir results/features
-python extract_lamination_features.py --base-dir /path/to/image_root --features-csv results/features/combined_features.csv
+python extract_embeddings.py --base-dir . --output-dir results/features
+python extract_texture_features.py --base-dir . --features-dir results/features
+python extract_lamination_features.py --base-dir . --features-csv results/features/combined_features.csv
 python auto_label.py --input-csv results/features/combined_features.csv --output-csv data/image_metadata_auto_label.csv
 python select_reliable_classes.py --input-csv data/image_metadata_auto_label.csv --output-csv data/image_metadata_reliable_classes.csv
 ```
-
-Labels per specimen are in `auto_label.py` (`SEED_LABELS`), model settings in `config.py`.
 
 ## Paper tables and figures
 
