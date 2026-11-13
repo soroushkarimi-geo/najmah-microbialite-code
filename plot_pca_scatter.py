@@ -1,4 +1,4 @@
-"""Fig. 6: first two principal components of the standardized 404-feature set
+"""Fig. 7: first two principal components of the standardized 404-feature set
 for all images. Class 1 (MF-B) and Class 2 (MF-E) in colour, the other
 microfacies and the unlabeled images in grey.
 
@@ -30,7 +30,7 @@ plt.rcParams["font.size"] = 11
 
 
 def run(input_csv, figures_dir):
-    """Draw Fig. 6: images on the first two principal components.
+    """Draw Fig. 7: images on the first two principal components.
 
     All feature columns are standardized (zero mean, unit variance) and
     projected with PCA. Unlabeled images, other microfacies, Class 1 (MF-B)

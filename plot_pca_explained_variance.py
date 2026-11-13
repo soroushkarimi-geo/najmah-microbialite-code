@@ -1,4 +1,4 @@
-"""Fig. 10: cumulative explained variance against number of principal
+"""Fig. 3: cumulative explained variance against number of principal
 components, standardized 404-feature set, all images, first 50 components.
 
     python plot_pca_explained_variance.py --input-csv data/image_metadata_auto_label.csv --figures-dir out/figures
@@ -22,7 +22,7 @@ N_SHOW = 50
 
 
 def run(input_csv, figures_dir):
-    """Draw Fig. 10: cumulative explained variance of the principal components.
+    """Draw Fig. 3: cumulative explained variance of the principal components.
 
     The standardized feature set is decomposed with PCA; the cumulative
     explained variance of the first 50 components is plotted with reference

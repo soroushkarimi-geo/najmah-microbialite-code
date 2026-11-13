@@ -1,4 +1,4 @@
-"""Fig. 7: Dudan measured log with specimen classes, model output and lamination index.
+"""Fig. 8: Dudan measured log with specimen classes, model output and lamination index.
 
 The measured log (lithology, sample ticks, formation contacts) is cropped without modification
 from a vector PDF of the Dudan log, passed with --log-pdf (not distributed in this repository). That drawing is at true thickness: a

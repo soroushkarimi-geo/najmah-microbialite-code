@@ -1,6 +1,6 @@
-"""Figs. 7 and 8: microbialite class of every specimen of one section by sample
-number (other microfacies in grey), next to the lamination index S of the
-Class 1 / Class 2 specimens. Dudan also shows the candidate boundaries SB5
+"""Fig. 9 (Kezi) and the matching Dudan plot: microbialite class of every
+specimen of one section by sample number (other microfacies in grey), next to
+the lamination index S of the Class 1 / Class 2 specimens. Dudan also shows the candidate boundaries SB5
 (~SD-92) and SB6 (~SD-122).
 
 S comes from build_section_df() and build_shallowing_index() in
@@ -89,7 +89,7 @@ def plot_positions(section_df):
 
 
 def run(input_csv, section_prefix, figures_dir):
-    """Draw Fig. 7 (Dudan) or Fig. 8 (Kezi).
+    """Draw the class and lamination-index plot of one section (Fig. 9 for Kezi).
 
     Left panel: the class of every specimen of the section by sample
     number, unlabeled specimens included. Right panel: the lamination index
