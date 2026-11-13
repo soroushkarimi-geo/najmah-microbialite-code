@@ -37,8 +37,8 @@ reasonable request. What you need depends on what you want to run:
 
 | You want to | You need |
 |---|---|
-| Reproduce the paper's tables and figures (except the log drawing in Fig. 8) | 1. the two feature tables |
-| Draw Fig. 8 | 1. and 3. the Dudan measured-log PDF |
+| Reproduce the paper's tables and figures (except the log drawing in Fig. 9) | 1. the two feature tables |
+| Draw Fig. 9 | 1. and 3. the Dudan measured-log PDF |
 | Rebuild the features from the images, run the video scripts or `binocular/` | 1. and 2. the thin-section image archive |
 
 All paths below are relative to the repository root, and every command is run from
@@ -121,7 +121,7 @@ run of `extract_embeddings.py` downloads the DINOv2-small weights
 (`facebook/dinov2-small`) from Hugging Face, so it needs internet access once; the
 model runs on the CPU.
 
-### 3. Dudan measured log (Fig. 8 only)
+### 3. Dudan measured log (Fig. 9 only)
 
 `plot_doudan_column_figure.py` crops the log and its legend from the vector PDF of
 the Dudan measured section, passed with `--log-pdf /path/to/doudan_log.pdf`. The crop
@@ -235,8 +235,8 @@ of another one, so run these first:
 1. `train_xgboost_cv.py` writes `out/models/` and `out/tables/cv_per_sample_predictions.csv`,
    which `score_against_reliable_model.py`, `light_mode_and_site_check.py` and
    `plot_doudan_column_figure.py` read.
-2. `compare_models.py` writes the tables for `plot_model_confusion_matrices.py` (Fig. 4).
-3. `score_against_reliable_model.py` writes `out/tables/small_class_triage.csv` for Fig. 8.
+2. `compare_models.py` writes the tables for `plot_model_confusion_matrices.py` (Fig. 5).
+3. `score_against_reliable_model.py` writes `out/tables/small_class_triage.csv` for Fig. 9.
 
 ### Scripts with fixed input paths
 
@@ -287,31 +287,32 @@ of the paper; for the order in which scripts depend on each other, see
 
 | Paper | What | Command |
 |---|---|---|
-| Fig. 3 (Sect. 4.4) | Cumulative explained variance, first 50 components | `python plot_pca_explained_variance.py --input-csv data/image_metadata_auto_label.csv --figures-dir out/figures` |
+| Fig. 4 (Sect. 4.4) | Cumulative explained variance, first 50 components | `python plot_pca_explained_variance.py --input-csv data/image_metadata_auto_label.csv --figures-dir out/figures` |
 | Sect. 4.4, 5.1 | Site-confound AUC; accuracy by light mode | `python light_mode_and_site_check.py` (after `train_xgboost_cv.py`) |
 | Sect. 5.1 | Main classifier, 42/49 specimens | `python train_xgboost_cv.py --input-csv data/image_metadata_reliable_classes.csv --models-dir out/models --tables-dir out/tables` |
 | Table 2 | Four models, accuracy and macro F1 | `python compare_models.py --input-csv data/image_metadata_reliable_classes.csv --tables-dir out/tables` |
 | Tables 2, 3 | Specimens correct, 95% Wilson interval | `python specimen_level_rerun.py --input-csv data/image_metadata_reliable_classes.csv --output-dir out/specimen_level` |
-| Fig. 4 | Confusion matrices of the four models | `python plot_model_confusion_matrices.py --tables-dir out/tables --figures-dir out/figures` (after `compare_models.py`) |
+| Fig. 5 | Confusion matrices of the four models | `python plot_model_confusion_matrices.py --tables-dir out/tables --figures-dir out/figures` (after `compare_models.py`) |
 | Table 3 | Feature family ablation | `python feature_family_ablation.py --input-csv data/image_metadata_reliable_classes.csv --output-csv out/tables/feature_family_ablation.csv` |
 | Sect. 5.2 | Fused vs DINOv2 only, McNemar / permutation | `python fusion_vs_dinov2_significance_test.py --input-csv data/image_metadata_reliable_classes.csv --output-csv out/tables/fusion_vs_dinov2_significance_test.csv` |
-| Figs. 5, 6 | SHAP and F-value importance, feature families in the top 30 | `python interpretability_analysis.py --input-csv data/image_metadata_auto_label.csv --tables-dir out/tables --figures-dir out/figures` |
-| Fig. 7 | First two principal components, all images | `python plot_pca_scatter.py --input-csv data/image_metadata_auto_label.csv --figures-dir out/figures` |
+| Figs. 6, 7 | SHAP and F-value importance, feature families in the top 30 | `python interpretability_analysis.py --input-csv data/image_metadata_auto_label.csv --tables-dir out/tables --figures-dir out/figures` |
+| Fig. 8 | First two principal components, all images | `python plot_pca_scatter.py --input-csv data/image_metadata_auto_label.csv --figures-dir out/figures` |
 | Sect. 5.3 | Fold-wise check of the selected features | `python foldwise_interpretability_check.py --input-csv data/image_metadata_auto_label.csv --output-csv out/tables/foldwise_interpretability_check.csv` |
 | Table 4 | Power of the Lomb-Scargle test (the code also gives a 5 m row, not shown in the paper) | `python stratigraphic_power_analysis.py data/image_metadata_reliable_classes.csv --output-csv out/tables/power_table.csv` |
 | Table 5 | Runs test, Lomb-Scargle | same command as Table 4 |
 | Table 5 | Turning point, coarse and fine | `python shallowing_index_cyclicity_analysis.py --input-csv data/image_metadata_auto_label.csv --output-dir out/tables/cyclicity` |
 | Table 5 | Mean shift at SB5, SB6 | `python shallowing_index_changepoint_test.py --input-csv data/image_metadata_auto_label.csv --output-dir out/tables/cyclicity` |
-| Fig. 8 | Dudan measured log with class, model output and lamination index | `python plot_doudan_column_figure.py --log-pdf /path/to/doudan_log.pdf` (after `train_xgboost_cv.py` and `score_against_reliable_model.py`; the log PDF is not distributed) |
-| Fig. 9 | Kezi section, class and lamination index | `python plot_section_lamination_index.py --input-csv data/image_metadata_auto_label.csv --section SK --figures-dir out/figures` |
+| Fig. 9 | Dudan measured log with class, model output and lamination index | `python plot_doudan_column_figure.py --log-pdf /path/to/doudan_log.pdf` (after `train_xgboost_cv.py` and `score_against_reliable_model.py`; the log PDF is not distributed) |
+| Fig. 10 | Kezi section, class and lamination index | `python plot_section_lamination_index.py --input-csv data/image_metadata_auto_label.csv --section SK --figures-dir out/figures` |
 | Sect. 5.5 | Triage of the other microfacies | `python score_against_reliable_model.py --input-csv data/image_metadata_auto_label.csv --models-dir out/models --output-csv out/tables/small_class_triage.csv` (after `train_xgboost_cv.py`) |
 | - | Dudan section, class and lamination index by sample number | `python plot_section_lamination_index.py --input-csv data/image_metadata_auto_label.csv --section SD --figures-dir out/figures` |
 | - | Dudan profile on a thickness axis, trend per T-R sequence | `python sequence_stratigraphic_profile.py --input-csv data/image_metadata_auto_label.csv --output-dir out/tables/cyclicity --figures-dir out/figures` |
 
-The output file names of the figure scripts keep an earlier figure numbering:
-`fig10_pca_explained_variance.png` is Fig. 3, `fig5_model_confusion_matrices.png` is
-Fig. 4, `fig6_pca_scatter.png` is Fig. 7 and `fig8_kezi_section.png` is Fig. 9;
-`fig7_dudan_section.png` is not in the paper.
+Each figure script names its output after the paper's figure number, e.g.
+`out/figures/fig4_pca_explained_variance.png` for Fig. 4 and
+`out/figures/fig9_dudan_column.pdf` for Fig. 9. Figs. 1-3 (study area, thin-section
+plate, texture transforms) are not produced by this code, and the Dudan plot of
+`plot_section_lamination_index.py` (`dudan_section_lamination_index.png`) is not in the paper.
 
 Run times on an Apple M-series laptop: about 13 min for `specimen_level_rerun.py`,
 3 to 5 min each for `train_xgboost_cv.py`, `compare_models.py`,
@@ -334,7 +335,7 @@ for the others.
 | Image accuracy, XGBoost fused | 0.779 | 0.785 |
 | Image accuracy, L1 logistic regression / random forest / kNN | 0.783 / 0.765 / 0.711 | 0.783 / 0.764 / 0.711 |
 | Specimens correct, LR / RF / kNN | 42 / 40 / 39 | 42 / 40 / 39 |
-| Fig. 4, gradient-boosted trees panel | 77.9% | 78.6% |
+| Fig. 5, gradient-boosted trees panel | 77.9% | 78.6% |
 | Ablation, image accuracy GLCM / lamination / DINOv2 / fused | 0.464 / 0.684 / 0.773 / 0.779 | 0.472 / 0.690 / 0.775 / 0.785 |
 | Ablation, specimens correct GLCM / lamination / DINOv2 / fused | 22 / 38 / 42 / 42 | 22 / 38 / 42 / 42 |
 | Fused vs DINOv2 only: discordant specimens, permutation p | 0, p = 1 | 0, p = 1 |

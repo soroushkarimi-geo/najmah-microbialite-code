@@ -1,4 +1,4 @@
-"""Fig. 9 (Kezi) and the matching Dudan plot: microbialite class of every
+"""Fig. 10 (Kezi) and the matching Dudan plot: microbialite class of every
 specimen of one section by sample number (other microfacies in grey), next to
 the lamination index S of the Class 1 / Class 2 specimens. Dudan also shows the candidate boundaries SB5
 (~SD-92) and SB6 (~SD-122).
@@ -33,9 +33,9 @@ UNLABELED = "unlabeled"
 
 SECTIONS = {
     "SD": {"name": "Dudan", "boundaries": ["SB5", "SB6"], "figsize": (7.6, 12.4),
-           "out_name": "fig7_dudan_section.png"},
+           "out_name": "dudan_section_lamination_index.png"},
     "SK": {"name": "Kezi", "boundaries": [], "figsize": (7.5, 3.7),
-           "out_name": "fig8_kezi_section.png"},
+           "out_name": "fig10_kezi_section.png"},
 }
 
 CLASS_NAMES = {"MF-B": "Class 1", "MF-E": "Class 2"}
@@ -89,7 +89,7 @@ def plot_positions(section_df):
 
 
 def run(input_csv, section_prefix, figures_dir):
-    """Draw the class and lamination-index plot of one section (Fig. 9 for Kezi).
+    """Draw the class and lamination-index plot of one section (Fig. 10 for Kezi).
 
     Left panel: the class of every specimen of the section by sample
     number, unlabeled specimens included. Right panel: the lamination index
@@ -101,7 +101,7 @@ def run(input_csv, section_prefix, figures_dir):
         input_csv: Labeled feature table (all images).
         section_prefix: ``'SD'`` (Dudan) or ``'SK'`` (Kezi).
         figures_dir: Output folder (``pathlib.Path``); writes
-            ``fig7_dudan_section.png`` or ``fig8_kezi_section.png``.
+            ``dudan_section_lamination_index.png`` or ``fig10_kezi_section.png``.
     """
     info = SECTIONS[section_prefix]
     df = pd.read_csv(input_csv)

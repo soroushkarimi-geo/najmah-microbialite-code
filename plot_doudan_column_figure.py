@@ -1,4 +1,4 @@
-"""Fig. 8: Dudan measured log with specimen classes, model output and lamination index.
+"""Fig. 9: Dudan measured log with specimen classes, model output and lamination index.
 
 The measured log (lithology, sample ticks, formation contacts) is cropped without modification
 from a vector PDF of the Dudan log, passed with --log-pdf (not distributed in this repository). That drawing is at true thickness: a
@@ -18,7 +18,7 @@ Data panels:
 
 How to run (from the repository root, after train_xgboost_cv.py and score_against_reliable_model.py):
     python plot_doudan_column_figure.py --log-pdf /path/to/doudan_log.pdf
-Outputs: out/figures/fig_doudan_column.pdf and .png
+Outputs: out/figures/fig9_dudan_column.pdf and .png
 """
 
 import argparse
@@ -35,7 +35,7 @@ FEATURES = Path("data/image_metadata_reliable_classes.csv")
 ALL_LABELS = Path("data/image_metadata_auto_label.csv")
 PREDICTIONS = Path("out/tables/cv_per_sample_predictions.csv")
 TRIAGE = Path("out/tables/small_class_triage.csv")
-OUT = Path("out/figures/fig_doudan_column")
+OUT = Path("out/figures/fig9_dudan_column")
 
 # Drawing geometry (PDF points), measured from the vector file.
 Y0_PT, PT_PER_M = 927.29, 3.609

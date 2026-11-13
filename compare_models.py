@@ -3,7 +3,7 @@ XGBoost, L1 logistic regression (PCA-30), random forest and kNN (PCA-30).
 
 Logistic regression and kNN get PCA-reduced, standardized features; the
 tree models use the raw features. Image-level reports and confusion matrices
-for Table 2 / Fig. 4 are written per model.
+for Table 2 / Fig. 5 are written per model.
 
     python compare_models.py --input-csv data/image_metadata_reliable_classes.csv --tables-dir out/tables
 """
@@ -125,7 +125,7 @@ def run(input_csv, tables_dir):
     For each model, the pooled out-of-fold classification report and
     confusion matrix are printed and written as
     ``compare_<model>_report.csv`` and ``compare_<model>_confusion.csv``
-    (read by ``plot_model_confusion_matrices.py`` for Fig. 4).
+    (read by ``plot_model_confusion_matrices.py`` for Fig. 5).
 
     Args:
         input_csv: Labeled feature table. Rows labeled ``'unlabeled'`` are

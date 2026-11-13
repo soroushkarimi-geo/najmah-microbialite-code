@@ -1,4 +1,4 @@
-"""Fig. 3: cumulative explained variance against number of principal
+"""Fig. 4: cumulative explained variance against number of principal
 components, standardized 404-feature set, all images, first 50 components.
 
     python plot_pca_explained_variance.py --input-csv data/image_metadata_auto_label.csv --figures-dir out/figures
@@ -22,7 +22,7 @@ N_SHOW = 50
 
 
 def run(input_csv, figures_dir):
-    """Draw Fig. 3: cumulative explained variance of the principal components.
+    """Draw Fig. 4: cumulative explained variance of the principal components.
 
     The standardized feature set is decomposed with PCA; the cumulative
     explained variance of the first 50 components is plotted with reference
@@ -32,7 +32,7 @@ def run(input_csv, figures_dir):
     Args:
         input_csv: Feature table (all images).
         figures_dir: Output folder (``pathlib.Path``); writes
-            ``fig10_pca_explained_variance.png``.
+            ``fig4_pca_explained_variance.png``.
     """
     df = pd.read_csv(input_csv)
     feature_cols = get_feature_columns(df)
@@ -55,7 +55,7 @@ def run(input_csv, figures_dir):
     plt.tight_layout()
 
     figures_dir.mkdir(parents=True, exist_ok=True)
-    out_path = figures_dir / "fig10_pca_explained_variance.png"
+    out_path = figures_dir / "fig4_pca_explained_variance.png"
     plt.savefig(out_path, dpi=150)
     plt.close()
     print(f"Saved to {out_path}")

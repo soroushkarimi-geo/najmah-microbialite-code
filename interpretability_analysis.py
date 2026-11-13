@@ -1,4 +1,4 @@
-"""Feature importance by two independent methods (Figs. 5 and 6):
+"""Feature importance by two independent methods (Figs. 6 and 7):
 SHAP (TreeExplainer on XGBoost) and the ANOVA F-value (no model).
 
 An XGBoost model is trained on all labeled images, then:
@@ -9,7 +9,7 @@ An XGBoost model is trained on all labeled images, then:
 
 Tables: shap_importance.csv, shap_per_class_importance.csv, f_value_importance.csv,
         shap_per_class_top10.csv, feature_family_breakdown.csv
-Figures: interp_top_features_comparison.png (Fig. 5), interp_family_breakdown.png (Fig. 6),
+Figures: fig6_shap_fvalue_top_features.png (Fig. 6), fig7_feature_family_breakdown.png (Fig. 7),
          interp_shap_summary.png
 
 This is a full-dataset fit; see foldwise_interpretability_check.py for the fold-wise check.
@@ -160,7 +160,7 @@ def compare_top_features(shap_ranking, f_ranking, top_n):
 
 
 def plot_top_features_comparison(shap_ranking, f_ranking, output_path):
-    """Draw Fig. 5: the top 20 features by SHAP and by F-value, side by side.
+    """Draw Fig. 6: the top 20 features by SHAP and by F-value, side by side.
 
     Bars are coloured by feature family (GLCM blue, lamination green,
     DINOv2 grey).
@@ -199,7 +199,7 @@ def plot_top_features_comparison(shap_ranking, f_ranking, output_path):
 
 
 def plot_family_breakdown(shap_ranking, f_ranking, output_path):
-    """Draw Fig. 6: how many of the top 30 features belong to each family.
+    """Draw Fig. 7: how many of the top 30 features belong to each family.
 
     Args:
         shap_ranking: Series sorted by SHAP importance.
@@ -269,7 +269,7 @@ def run(input_csv, tables_dir, figures_dir):
     Trains ``train_final_model`` on all labeled images (every labeled
     class, not only MF-B / MF-E), computes both rankings, their top-30
     overlap, the top 10 SHAP features per class and the feature-family
-    breakdown, and draws Figs. 5 and 6 and the SHAP summary plot.
+    breakdown, and draws Figs. 6 and 7 and the SHAP summary plot.
 
     Args:
         input_csv: Labeled feature table. Rows labeled ``'unlabeled'`` are
@@ -326,12 +326,12 @@ def run(input_csv, tables_dir, figures_dir):
 
     # -----------------------------
     # Figures
-    plot_top_features_comparison(shap_global, f_ranking, figures_dir / "interp_top_features_comparison.png")
-    print(f"\nSaved {figures_dir / 'interp_top_features_comparison.png'}")
+    plot_top_features_comparison(shap_global, f_ranking, figures_dir / "fig6_shap_fvalue_top_features.png")
+    print(f"\nSaved {figures_dir / 'fig6_shap_fvalue_top_features.png'}")
 
-    family_df = plot_family_breakdown(shap_global, f_ranking, figures_dir / "interp_family_breakdown.png")
+    family_df = plot_family_breakdown(shap_global, f_ranking, figures_dir / "fig7_feature_family_breakdown.png")
     family_df.to_csv(tables_dir / "feature_family_breakdown.csv")
-    print(f"Saved {figures_dir / 'interp_family_breakdown.png'}")
+    print(f"Saved {figures_dir / 'fig7_feature_family_breakdown.png'}")
     print("\nFeature families in the top 30:")
     print(family_df.to_string())
 

@@ -1,4 +1,4 @@
-"""Fig. 7: first two principal components of the standardized 404-feature set
+"""Fig. 8: first two principal components of the standardized 404-feature set
 for all images. Class 1 (MF-B) and Class 2 (MF-E) in colour, the other
 microfacies and the unlabeled images in grey.
 
@@ -30,7 +30,7 @@ plt.rcParams["font.size"] = 11
 
 
 def run(input_csv, figures_dir):
-    """Draw Fig. 7: images on the first two principal components.
+    """Draw Fig. 8: images on the first two principal components.
 
     All feature columns are standardized (zero mean, unit variance) and
     projected with PCA. Unlabeled images, other microfacies, Class 1 (MF-B)
@@ -40,7 +40,7 @@ def run(input_csv, figures_dir):
     Args:
         input_csv: Feature table with a ``label`` column (all images).
         figures_dir: Output folder (``pathlib.Path``); writes
-            ``fig6_pca_scatter.png``.
+            ``fig8_pca_scatter.png``.
     """
     df = pd.read_csv(input_csv)
     feature_cols = get_feature_columns(df)
@@ -70,7 +70,7 @@ def run(input_csv, figures_dir):
     fig.tight_layout()
 
     figures_dir.mkdir(parents=True, exist_ok=True)
-    out_path = figures_dir / "fig6_pca_scatter.png"
+    out_path = figures_dir / "fig8_pca_scatter.png"
     fig.savefig(out_path, dpi=200, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved to {out_path}")

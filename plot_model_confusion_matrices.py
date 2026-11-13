@@ -1,4 +1,4 @@
-"""Fig. 4: two-class image confusion matrices of the four models (Table 2),
+"""Fig. 5: two-class image confusion matrices of the four models (Table 2),
 percentages per true class. Reads the compare_*_confusion.csv tables written
 by compare_models.py, so run that first.
 
@@ -29,7 +29,7 @@ plt.rcParams["font.size"] = 11
 
 
 def run(tables_dir, figures_dir):
-    """Draw Fig. 4: one 2 x 2 confusion matrix per model.
+    """Draw Fig. 5: one 2 x 2 confusion matrix per model.
 
     Each cell shows the image count and its share of the true class (row
     percentage), and is shaded by that share. Panel titles give the
