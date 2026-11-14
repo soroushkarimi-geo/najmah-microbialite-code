@@ -1,14 +1,19 @@
-# Najmah microbialite fabric classification
+# Naokelekan microbialite fabric classification
 
 Code for the paper:
 
 > **Machine-learning classification of laminated and clotted microbialite fabrics in
-> small thin-section datasets, with stratigraphic order testing: Najmah Formation, NW Iran**
+> small thin-section datasets, with stratigraphic order testing: Naokelekan Formation, NW Iran**
 
 The code classifies laminated (stromatolite, MF-B, Class 1) and clotted (thrombolite,
-MF-E, Class 2) microbialite fabric in thin-section images of the Najmah Formation
+MF-E, Class 2) microbialite fabric in thin-section images of the Naokelekan Formation
 (Middle-Upper Jurassic, Dudan/Dawan and Kezi sections, NW Iran), and tests the
 resulting lamination index for stratigraphic order.
+
+Naokelekan (Kurdistan region of Iraq) and Najmah (central and southern Iraq, and earlier
+work on the study area) are two names for the same Oxfordian-Kimmeridgian formation in
+different areas. The repository name, the image folder `Najmeh Formation/` and some code
+comments keep the older name.
 
 - 49 specimens, 1,651 PPL/XPL images (Classes 1 and 2)
 - 404 features per image: 12 GLCM, 384 DINOv2-small, 8 lamination descriptors
@@ -130,7 +135,7 @@ line up.
 
 ### Using your own images
 
-The scripts were written for the Najmah archive, but the feature extraction and the
+The scripts were written for the Naokelekan image archive, but the feature extraction and the
 classifiers work on any set of thin-section images arranged as described here. You
 only prepare the raw input: the images and one label per specimen. The feature
 tables and models are then produced by the scripts.
@@ -213,12 +218,12 @@ analyses on `data/image_metadata_auto_label.csv` (all classes) or
 
 **5. Stratigraphy scripts**
 
-The order tests and section figures are specific to the Najmah sections: they use the
+The order tests and section figures are specific to the two measured sections: they use the
 section names `Dudan` / `Kezi` and the sample-code prefixes `SD` / `SK`, the sample
 number as stratigraphic position (numbers must increase upward), and Dudan-specific
 constants. To use them on another section, replace these constants:
 
-| Script | Najmah-specific settings |
+| Script | Section-specific settings |
 |---|---|
 | `shallowing_index_cyclicity_analysis.py` | `COARSE_RANK` (ordinal rank of MF-D, MF-B, MF-E), sections in `run` (`SD`, `SK`) |
 | `shallowing_index_changepoint_test.py` | `SEGMENT_BOUNDS` (T-R sequences as sample-number ranges), section `SD` |
